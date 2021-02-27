@@ -10,8 +10,7 @@ try:
     from scipy import signal as sg
     import scipy.ndimage as ndimage
     from scipy.ndimage.filters import maximum_filter
-    
-    
+
     print("PIL imports:")
     from PIL import Image
     
@@ -51,7 +50,7 @@ def get_img_and_label(folder_name):
     list_images = walks_inside_the_folders(default_base + '/leftImg8bit/' + folder_name, '_leftImg8bit.png')
     list_labels = walks_inside_the_folders(default_base + '/gtFine/' + folder_name, '_gtFine_labelIds.png')
 
-    for image,labels in zip(list_images,list_labels):
+    for image, labels in zip(list_images, list_labels):
         yield image, labels
 
 
@@ -130,7 +129,7 @@ def build_dataset():
                 
             with open('Data_dir_random_updated/train/labels.bin', "ab") as labels_file:
                 for label in labels:
-                    labels_file.write((label).to_bytes(1, byteorder='big', signed=False))
+                    labels_file.write(label.to_bytes(1, byteorder='big', signed=False))
     
     for src_img_name, label_img_name in get_img_and_label("val"):
         src_img = Image.open(src_img_name)
@@ -144,19 +143,19 @@ def build_dataset():
                 
             with open('Data_dir_random_updated/val/labels.bin', "ab") as labels_file:
                 for label in labels:
-                    labels_file.write((label).to_bytes(1, byteorder='big', signed=False))
+                    labels_file.write(label.to_bytes(1, byteorder='big', signed=False))
 
 
 def display_crop_img_and_label(img_file, label_file, index):   
     fpo = np.memmap(img_file, dtype=np.uint8, mode='r', offset=index * 19683)
     fpo = fpo[:19683]
-    img = fpo.reshape(81, 81 ,3)
+    img = fpo.reshape(81, 81, 3)
     Image.fromarray(img.astype('uint8'), 'RGB').show()
     
     fpo = np.memmap(label_file, mode='r', offset=index, dtype=np.uint8)
     label = fpo[0]
     
-    print('label :' ,label)
+    print('label :', label)
 
 
 if __name__ == "__main__":

@@ -25,19 +25,18 @@ except ImportError:
 print("All imports okay. Yay!")
 
 
-def find_tfl_lights(c_image: np.ndarray, **kwargs):
+def find_tfl_lights(c_image: np.ndarray):
     """
     Detect candidates for TFL lights. Use c_image, kwargs and you imagination to implement
     :param c_image: The image itself as np.uint8, shape of (H, W, 3)
-    :param kwargs: Whatever config you want to pass in here
     :return: 4-tuple of x_red, y_red, x_green, y_green
     """
 
-    red_x, red_y ,green_x, green_y = find_light_sources_candidates(c_image)
+    red_x, red_y, green_x, green_y = find_light_sources_candidates(c_image)
     marking_the_coordinates(c_image, red_x, red_y, 'red')
     marking_the_coordinates(c_image, green_x, green_y, 'green')
     
-    return red_x, red_y ,green_x, green_y
+    return red_x, red_y, green_x, green_y
     
 
 def show_image_and_gt(image, objs, fig_num=None):
@@ -60,6 +59,7 @@ def test_find_tfl_lights(image_path, json_path=None, fig_num=None):
     """
     Run the attention code
     """
+
     image = np.array(Image.open(image_path))
 
     if json_path is None:
@@ -72,7 +72,7 @@ def test_find_tfl_lights(image_path, json_path=None, fig_num=None):
         
     show_image_and_gt(image, objects, fig_num)
     
-    red_x, red_y, green_x, green_y = find_tfl_lights(image, some_threshold=42)
+    red_x, red_y, green_x, green_y = find_tfl_lights(image)
     plt.plot(red_x, red_y, 'ro', color='r', markersize=4)
     plt.plot(green_x, green_y, 'ro', color='g', markersize=4)
 
@@ -121,7 +121,7 @@ def get_maximum_points(image):
 
 def get_lights_coordinates(convert_image):
     kernel = get_kernel()
-    grad = sg.convolve2d(convert_image, kernel, boundary='symm', mode='same') 
+    grad = sg.convolve2d(convert_image, kernel, boundary='symm', mode='same')
     axis_x, axis_y = get_maximum_points(grad)
     plt.show()
     
@@ -129,31 +129,33 @@ def get_lights_coordinates(convert_image):
     
 
 def marking_the_coordinates(image, axis_x, axis_y, name_color):
-    image = np.array(image) 
+    image = np.array(image)
     
     if name_color == 'red':
-        color = [255,0,0]
+        color = [255, 0, 0]
     
-    if name_color == 'green':
-        color = [0,255,0]
+    elif name_color == 'green':
+        color = [0, 255, 0]
+
+    else:
+        color = [255, 255, 255]
     
     for i in range(len(axis_x)):
-        image[axis_x[i]: axis_x[i] + 8 , axis_y[i] : axis_y[i] + 8] = [[color,color,color,color,color,color,color,color]
-                                                                        ,[color,color,color,color,color,color,color,color]
-                                                                        ,[color,color,color,color,color,color,color,color]
-                                                                        ,[color,color,color,color,color,color,color,color]
-                                                                        ,[color,color,color,color,color,color,color,color]
-                                                                        ,[color,color,color,color,color,color,color,color]
-                                                                        ,[color,color,color,color,color,color,color,color]
-                                                                        ,[color,color,color,color,color,color,color,color]]
-        
+        image[axis_x[i]: axis_x[i] + 8, axis_y[i]: axis_y[i] + 8] = [[color, color, color, color, color, color, color, color],
+                                                                        [color, color, color, color, color, color, color, color],
+                                                                        [color, color, color, color, color, color, color, color],
+                                                                        [color, color, color, color, color, color, color, color],
+                                                                        [color, color, color, color, color, color, color, color],
+                                                                        [color, color, color, color, color, color, color, color],
+                                                                        [color, color, color, color, color, color, color, color],
+                                                                        [color, color, color, color, color, color, color, color]]
     Image.fromarray(image).show()
 
 
 def find_light_sources_candidates(image):
-    red_image = np.array(image)[:,:,0]
+    red_image = np.array(image)[:, :, 0]
     red_x, red_y = get_lights_coordinates(red_image)
-    green_image = np.array(image)[:,:,1]
+    green_image = np.array(image)[:, :,  1]
     green_x, green_y = get_lights_coordinates(green_image)
 
     return red_x, red_y, green_x, green_y
@@ -164,7 +166,6 @@ def main(argv=None):
     Consider looping over some images from here, so you can manually exmine the results
     Keep this functionality even after you have all system running, because you sometime want to debug/improve a module
     :param argv: In case you want to programmatically run this"""
-
 
     parser = argparse.ArgumentParser("Test TFL attention mechanism")
     parser.add_argument('-i', '--image', type=str, help='Path to an image')

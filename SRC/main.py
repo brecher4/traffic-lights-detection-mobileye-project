@@ -2,7 +2,7 @@ from Controller.controller import Controller
 
 
 def main():
-    controller = Controller('Model\\frames_file.pls')
+    controller = Controller('Model/frames_file.pls')
     controller.run()
 
 

@@ -5,13 +5,13 @@ import math
 def calc_TFL_dist(prev_container, curr_container, focal, pp):
     norm_prev_pts, norm_curr_pts, R, foe, tZ = prepare_3D_data(prev_container, curr_container, focal, pp)
     
-    if(abs(tZ) < 10e-6):
+    if abs(tZ) < 10e-6:
         print('tz = ', tZ)
     
-    elif (norm_prev_pts.size == 0):
+    elif norm_prev_pts.size == 0:
         print('no prev points')
     
-    elif (norm_curr_pts.size == 0):
+    elif norm_curr_pts.size == 0:
         print('no curr points')
     
     else:
@@ -84,7 +84,7 @@ def rotate(pts, R):
     temp = R @ pts.T
     rotate_pts_t = temp[:2] / temp[2]
 
-    return (rotate_pts_t.T)[:, :2]
+    return rotate_pts_t.T[:, :2]
 
 
 def find_corresponding_points(p, norm_pts_rot, foe):
